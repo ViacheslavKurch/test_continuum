@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Lib\Interfaces;
+namespace App\Services\Interfaces;
 
 use App\Models\User;
 
-interface UserAuthenticatorInterface
+interface RegisterUserServiceInterface
 {
     public function execute(string $email, string $password): User;
 }

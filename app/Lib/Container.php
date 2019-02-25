@@ -2,24 +2,40 @@
 
 namespace App\Lib;
 
-class Container
+use App\Lib\Interfaces\ContainerInterface;
+
+final class Container implements ContainerInterface
 {
     /** @var array */
-    private $services;
+    private $services = [];
 
     /** @var array */
-    private $servicesStore;
+    private $servicesStore = [];
 
     /**
      * Container constructor.
+     * @param array $services
+     * @throws \Exception
      */
-    public function __construct()
+    public function __construct(array $services)
     {
-        $this->services = [];
-        $this->servicesStore = [];
+        foreach ($services as $alias => $service) {
+            $this->register($alias, $service['class'], $service['arguments']);
+        }
     }
 
-    public function register(string $serviceAlias, string $className, array $arguments = []): self
+    /**
+     * @param string $serviceAlias
+     * @param string $className
+     * @param array $arguments
+     * @return Container
+     * @throws \Exception
+     */
+    private function register(
+        string $serviceAlias,
+        string $className,
+        array $arguments = []
+    ): ContainerInterface
     {
         if (true === $this->hasService($serviceAlias)) {
             throw new \Exception('Service ' . $serviceAlias . 'with same alias already exists');
@@ -30,18 +46,18 @@ class Container
         }
 
         $this->services[$serviceAlias] = [
-            'class' => $className,
+            'class'     => $className,
             'arguments' => $arguments
         ];
 
         return $this;
     }
 
-    private function hasService(string $serviceAlias): bool
-    {
-        return isset($this->services[$serviceAlias]);
-    }
-
+    /**
+     * @param string $serviceAlias
+     * @return object
+     * @throws \Exception
+     */
     public function getService(string $serviceAlias): object
     {
         if (false === $this->hasService($serviceAlias)) {
@@ -55,6 +71,20 @@ class Container
         return $this->servicesStore[$serviceAlias];
     }
 
+    /**
+     * @param string $serviceAlias
+     * @return bool
+     */
+    private function hasService(string $serviceAlias): bool
+    {
+        return isset($this->services[$serviceAlias]);
+    }
+
+    /**
+     * @param string $serviceAlias
+     * @return object
+     * @throws \Exception
+     */
     private function resolveService(string $serviceAlias): object
     {
         $serviceConfig = $this->services[$serviceAlias];

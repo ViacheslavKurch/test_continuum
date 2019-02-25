@@ -2,7 +2,10 @@
 
 namespace App\Lib;
 
-class View
+use App\Lib\Interfaces\AuthInterface;
+use App\Lib\Interfaces\ViewInterface;
+
+final class View implements ViewInterface
 {
     /** @var string */
     private $basePath;
@@ -10,13 +13,23 @@ class View
     /** @var Auth */
     private $auth;
 
-    public function __construct($basePath, Auth $auth)
+    /**
+     * View constructor.
+     * @param $basePath
+     * @param AuthInterface $auth
+     */
+    public function __construct($basePath, AuthInterface $auth)
     {
         $this->basePath = $basePath;
         $this->auth = $auth;
     }
 
-    public function render(string $view, array $parameters = [])
+    /**
+     * @param string $view
+     * @param array $parameters
+     * @return string
+     */
+    public function render(string $view, array $parameters = []): string
     {
         $path = $this->basePath . str_replace('.', '/', $view) . '.php';
 
@@ -30,6 +43,11 @@ class View
         return $this->getFileContentWithParams($this->basePath . 'layout.php', $pageParameters);
     }
 
+    /**
+     * @param $filePath
+     * @param $parameters
+     * @return string
+     */
     private function getFileContentWithParams($filePath, $parameters): string
     {
         ob_start();

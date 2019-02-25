@@ -2,17 +2,31 @@
 
 namespace App\Lib;
 
-class Router
+use App\Lib\Interfaces\AuthInterface;
+use App\Lib\Interfaces\RouterInterface;
+use App\Lib\Interfaces\RequestInterface;
+
+final class Router implements RouterInterface
 {
     /** @var array */
     private $routes;
 
+    /**
+     * Router constructor.
+     * @param array $routes
+     */
     public function __construct(array $routes)
     {
         $this->routes = $routes;
     }
 
-    public function handle(Request $request, Auth $auth): array
+    /**
+     * @param RequestInterface $request
+     * @param AuthInterface $auth
+     * @return array
+     * @throws \Exception
+     */
+    public function handle(RequestInterface $request, AuthInterface $auth): array
     {
         $requestMethod = $request->getRequestMethod();
         $requestPath = $request->getRequestPath();
@@ -33,6 +47,11 @@ class Router
         throw new \Exception('Route not found');
     }
 
+    /**
+     * @param string $route
+     * @param string $requestPath
+     * @return bool
+     */
     private function routeMatchRequestPath(string $route, string $requestPath): bool
     {
         $routePattern = $this->getRoutePattern($route);
@@ -44,6 +63,11 @@ class Router
         return $route === $requestPath;
     }
 
+    /**
+     * @param string $route
+     * @param string $requestPath
+     * @param Request $request
+     */
     private function setRouteNamedParametersValuesToRequest(string $route, string $requestPath, Request $request): void
     {
         $routePattern = $this->getRoutePattern($route);
@@ -60,6 +84,10 @@ class Router
         }
     }
 
+    /**
+     * @param string $route
+     * @return string|null
+     */
     private function getRoutePattern(string $route): ?string
     {
         $routePattern = preg_replace('/{(\w+)}/', '(\d+)',  $route,  -1,  $count);

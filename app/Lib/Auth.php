@@ -2,11 +2,11 @@
 
 namespace App\Lib;
 
+use App\Models\User;
 use App\Lib\Interfaces\AuthInterface;
-use App\Lib\Interfaces\UserRepositoryInterface;
-use App\Model\User;
+use App\Repository\Interfaces\UserRepositoryInterface;
 
-class Auth implements AuthInterface
+final class Auth implements AuthInterface
 {
     /** @var Request */
     private $request;
@@ -28,7 +28,7 @@ class Auth implements AuthInterface
         $this->userRepository = $userRepository;
     }
 
-    public function init()
+    public function init(): void
     {
         $userId = $this->request->getSessionParam('userId');
 
@@ -38,6 +38,9 @@ class Auth implements AuthInterface
         }
     }
 
+    /**
+     * @param User $user
+     */
     public function setUser(User $user): void
     {
         $this->user = $user;
@@ -45,6 +48,9 @@ class Auth implements AuthInterface
         $this->request->setSessionParam('userId', $user->getId());
     }
 
+    /**
+     * @return bool
+     */
     public function isAuthorized(): bool
     {
         return null !== $this->user;

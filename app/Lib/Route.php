@@ -2,7 +2,9 @@
 
 namespace App\Lib;
 
-class Route
+use App\Lib\Interfaces\RouteInterface;
+
+final class Route implements RouteInterface
 {
     /** @var string */
     private $route;
@@ -23,7 +25,12 @@ class Route
      * @param string $action
      * @param bool $needAuthorization
      */
-    public function __construct(string $route, string $controller, string $action, bool $needAuthorization)
+    public function __construct(
+        string $route,
+        string $controller,
+        string $action,
+        bool $needAuthorization
+    )
     {
         $this->route = $route;
         $this->controller = $controller;

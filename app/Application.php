@@ -3,20 +3,27 @@
 namespace App;
 
 use App\Lib\Auth;
-use App\Lib\Container;
-use App\Lib\Request;
 use App\Lib\Router;
+use App\Lib\Request;
+use App\Lib\Container;
 
-class Application
+final class Application
 {
     /** @var Container */
     private $container;
 
+    /**
+     * Application constructor.
+     * @param Container $container
+     */
     public function __construct(Container $container)
     {
         $this->container = $container;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function run(): void
     {
         /** @var Router $router */
